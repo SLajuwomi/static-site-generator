@@ -13,6 +13,8 @@ class TestTextNode(unittest.TestCase):
         self.assertNotEqual(node3, node4)
         node5 = TextNode("bold node", TextType.BOLD)
         node6 = TextNode("link", TextType.LINK)
+        self.assertNotEqual(node5, node6)
+        node7 = TextNode("This should not work", TextType.CODE)
 
 
 if __name__ == "__main__":
