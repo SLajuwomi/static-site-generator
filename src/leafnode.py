@@ -3,7 +3,7 @@ from htmlnode import HTMLNode
 
 class LeafNode(HTMLNode):
     def __init__(self, tag, value, props=None):
-        super().__init__(tag, value, props)
+        super().__init__(tag=tag, value=value, props=props)
 
     def to_html(self):
         if not self.value:
@@ -12,8 +12,6 @@ class LeafNode(HTMLNode):
         if not self.tag:
             return self.value
 
-        final_string = ""
         if self.props == None:
             return f"<{self.tag}>{self.value}</{self.tag}>"
-        print(super().props_to_html())
         return f"<{self.tag} {super().props_to_html()}>{self.value}</{self.tag}>"
