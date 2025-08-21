@@ -17,7 +17,6 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
             else:
                 new_nodes.append(TextNode(string, text_type))
 
-    print(new_nodes)
     return new_nodes
 
 
