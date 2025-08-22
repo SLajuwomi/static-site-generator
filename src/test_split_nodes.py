@@ -6,21 +6,21 @@ from textnode import TextNode, TextType
 
 class TestSplitNodes(unittest.TestCase):
     def test_split_nodes(self):
-        code_node = TextNode("This is a text with a `code block` word", TextType.PLAIN)
-        italic_node = TextNode("This is _an italic word_.", TextType.PLAIN)
+        code_node = TextNode("This is a text with a `code block` word", TextType.TEXT)
+        italic_node = TextNode("This is _an italic word_.", TextType.TEXT)
         italic_nested_bold_node = TextNode(
-            "This is an _italic and **bold** word_.", TextType.PLAIN
+            "This is an _italic and **bold** word_.", TextType.TEXT
         )
-        bold_node = TextNode("This is a **bold** node", TextType.PLAIN)
+        bold_node = TextNode("This is a **bold** node", TextType.TEXT)
 
         self.assertEqual(
             split_nodes_delimiter(
                 old_nodes=[code_node], delimiter="`", text_type=TextType.CODE
             ),
             [
-                TextNode("This is a text with a ", TextType.PLAIN),
+                TextNode("This is a text with a ", TextType.TEXT),
                 TextNode("code block", TextType.CODE),
-                TextNode(" word", TextType.PLAIN),
+                TextNode(" word", TextType.TEXT),
             ],
         )
 
@@ -29,9 +29,9 @@ class TestSplitNodes(unittest.TestCase):
                 old_nodes=[italic_node], delimiter="_", text_type=TextType.ITALIC
             ),
             [
-                TextNode("This is ", TextType.PLAIN),
+                TextNode("This is ", TextType.TEXT),
                 TextNode("an italic word", TextType.ITALIC),
-                TextNode(".", TextType.PLAIN),
+                TextNode(".", TextType.TEXT),
             ],
         )
 
@@ -42,9 +42,9 @@ class TestSplitNodes(unittest.TestCase):
                 text_type=TextType.ITALIC,
             ),
             [
-                TextNode("This is an ", TextType.PLAIN),
+                TextNode("This is an ", TextType.TEXT),
                 TextNode("italic and **bold** word", TextType.ITALIC),
-                TextNode(".", TextType.PLAIN),
+                TextNode(".", TextType.TEXT),
             ],
         )
 
@@ -53,8 +53,8 @@ class TestSplitNodes(unittest.TestCase):
                 old_nodes=[bold_node], delimiter="**", text_type=TextType.BOLD
             ),
             [
-                TextNode("This is a ", TextType.PLAIN),
+                TextNode("This is a ", TextType.TEXT),
                 TextNode("bold", TextType.BOLD),
-                TextNode(" node", TextType.PLAIN),
+                TextNode(" node", TextType.TEXT),
             ],
         )

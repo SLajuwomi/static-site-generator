@@ -4,7 +4,7 @@ from leafnode import LeafNode
 
 
 class TextType(Enum):
-    PLAIN = "plain"
+    TEXT = "text"
     BOLD = "bold"
     ITALIC = "italic"
     CODE = "code"
@@ -33,7 +33,7 @@ class TextNode:
             raise Exception("Invalid Text Type")
 
         # STRINGS ARE NOT ENUM!!!
-        if self.text_type == TextType.PLAIN:
+        if self.text_type == TextType.TEXT:
             return LeafNode(tag=None, value=self.text)
         if self.text_type == TextType.BOLD:
             return LeafNode(tag="b", value=self.text)
