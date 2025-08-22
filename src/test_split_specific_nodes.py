@@ -22,3 +22,20 @@ class TestSplitSpecificNodes(unittest.TestCase):
             ],
             new_nodes,
         )
+
+    def test_split_links(self):
+        node = TextNode(
+            "This is text with a [link](https://boot.dev) and another [neovim](www.gogoogleitnoob.com)",
+            TextType.TEXT,
+        )
+
+        new_nodes = split_nodes_link([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with a ", TextType.TEXT),
+                TextNode("link", TextType.LINK, "https://boot.dev"),
+                TextNode(" and another ", TextType.TEXT),
+                TextNode("neovim", TextType.LINK, "www.gogoogleitnoob.com"),
+            ],
+            new_nodes,
+        )
