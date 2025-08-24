@@ -1,6 +1,10 @@
 import unittest
 
-from extract_markdown import extract_markdown_images, extract_markdown_links
+from extract_markdown import (
+    extract_markdown_images,
+    extract_markdown_links,
+    markdown_to_blocks,
+)
 
 
 class TestExtractMarkdown(unittest.TestCase):
@@ -16,4 +20,42 @@ class TestExtractMarkdown(unittest.TestCase):
         )
         self.assertListEqual(
             [("google", "www.google.com"), ("Github", "www.github.com")], matches
+        )
+
+    def test_markdown_to_blocks(self):
+        md = """
+This is **bolded** paragraph
+
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+
+- This is a list
+- with items
+"""
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+                "- This is a list\n- with items",
+            ],
+        )
+
+    def test_markdown_to_blocks_2(self):
+        md = """
+
+
+This is an _italic_ line.
+This is a line next to italic line.
+
+Testing double new line.
+"""
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            [
+                "This is an _italic_ line.\nThis is a line next to italic line.",
+                "Testing double new line.",
+            ],
         )
