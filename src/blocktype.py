@@ -12,7 +12,7 @@ class BlockType(Enum):
 
 def block_to_block_type(block):
     lines = block.split("\n")
-    if block.startswith("# ", "## ", "### ", "#### ", "##### ", "###### "):
+    if block.startswith(("# ", "## ", "### ", "#### ", "##### ", "###### ")):
         return BlockType.HEADING
     if len(lines) > 1 and lines[0].startswith("```") and lines[-1].startswith("```"):
         return BlockType.CODE
