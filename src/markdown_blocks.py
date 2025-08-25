@@ -1,4 +1,5 @@
 from enum import Enum
+from htmlnode import HTMLNode
 
 
 class BlockType(Enum):
@@ -8,6 +9,12 @@ class BlockType(Enum):
     QUOTE = "quote"
     OLIST = "ordered_list"
     ULIST = "unordered_list"
+
+
+def markdown_to_blocks(markdown):
+    list_markdown = markdown.split("\n\n")
+    new_list = [item.strip() for item in list_markdown if item != ""]
+    return new_list
 
 
 def block_to_block_type(block):
@@ -34,3 +41,22 @@ def block_to_block_type(block):
             i += 1
         return BlockType.OLIST
     return BlockType.PARAGRAPH
+
+
+def markdown_to_html_node(markdown):
+    blocked_markdown = markdown_to_blocks(markdown)
+    for block in blocked_markdown:
+        type_of_block = block_to_block_type(block)
+        if type_of_block == BlockType.QUOTE:
+            new_html_node = HTMLNode("blockquote", block)
+        if type_of_block == BlockType.HEADING:
+            for char in block:
+                if char == "#":
+                    heading_count += 1
+                else:
+                    break
+            new_html_node = HTMLNode(f"h{heading_count}", block)
+        if type_of_block == BlockType.PARAGRAPH:
+            new_html_node = HTMLNode("p", block)
+        if type_of_block == BlockType.CODE:
+            continue
