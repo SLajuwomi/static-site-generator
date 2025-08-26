@@ -46,18 +46,15 @@ def block_to_block_type(block):
 
 def markdown_to_html_node(markdown):
     blocked_markdown = markdown_to_blocks(markdown)
-    print(f"Blocked Markdown: {blocked_markdown}")
+    blocked_nodes = []
     for block in blocked_markdown:
         type_of_block = block_to_block_type(block)
         list_items = block.split("\n")
-        print(f"Block:\n{block}")
-        print(f"Block Type: {type_of_block}")
-        print(f"List Items: {list_items}")
         if type_of_block == BlockType.QUOTE:
             stripped_list = [item.lstrip("> ").strip() for item in list_items]
             stripped_block = "\n".join(stripped_list)
-            new_html_node = LeafNode("blockquote", stripped_block)
-            # print(new_html_node.to_html())
+            quote_node = LeafNode("blockquote", stripped_block)
+            blocked_nodes.append(quote_node)
         if type_of_block == BlockType.HEADING:
             heading_count = 0
             for char in block:
@@ -69,44 +66,62 @@ def markdown_to_html_node(markdown):
                 item.lstrip("#" * heading_count + " ").strip() for item in list_items
             ]
             stripped_block = "\n".join(stripped_list)
-            new_html_node = LeafNode(f"h{heading_count}", stripped_block)
-            # print(new_html_node.to_html())
+            heading_node = LeafNode(f"h{heading_count}", stripped_block)
+            blocked_nodes.append(heading_node)
         if type_of_block == BlockType.PARAGRAPH:
-            new_html_node = LeafNode("p", block)
-            # print(new_html_node.to_html())
+            block = block.replace("\n", " ")
+            children = text_to_children(block)
+            paragraph_node = ParentNode("p", children)
+            blocked_nodes.append(paragraph_node)
         if type_of_block == BlockType.CODE:
             code_content = "\n".join(list_items[1:-1])
-            text_code_node = TextNode(code_content, TextType.TEXT)
+            code_content += "\n"
+            text_code_node = TextNode(code_content, TextType.CODE)
             text_code_html_node = text_code_node.text_node_to_html_node()
-            # code_node = LeafNode("code", code_content)
             pre_node = ParentNode("pre", children=[text_code_html_node])
-            # print(pre_node.to_html())
+            blocked_nodes.append(pre_node)
         if type_of_block == BlockType.ULIST:
             li_nodes = [
                 LeafNode("li", item.lstrip("- ").strip()) for item in list_items
             ]
             ul_node = ParentNode("ul", children=li_nodes)
-            # print(ul_node.to_html())
+            blocked_nodes.append(ul_node)
         if type_of_block == BlockType.OLIST:
             i = 1
             li_nodes = []
             for item in list_items:
                 li_nodes.append(LeafNode("li", item.lstrip(f"{i}. ").strip()))
                 i += 1
-            # li_nodes = [
-            #     LeafNode("li", item.lstrip("- ").strip()) for item in list_items
-            # ]
             ol_node = ParentNode("ol", children=li_nodes)
-            # print(ol_node.to_html())
+            blocked_nodes.append(ol_node)
+    div_node = ParentNode("div", blocked_nodes)
+    return div_node
 
 
-# markdown = """
-# - Item 1
-# - Item 2
-# - Item 3
-# """
-markdown = """
-### This is a level 3 heading
-"""
-nodes = markdown_to_html_node(markdown)
-print(nodes)
+def text_to_children(text):
+    import re
+
+    children = []
+    patterns = [
+        (r"\*\*(.*?)\*\*", TextType.BOLD),
+        (r"_(.*?)_", TextType.ITALIC),
+        (r"`(.*?)`", TextType.CODE),
+    ]
+    pos = 0
+    while pos < len(text):
+        match = None
+        for pattern, text_type in patterns:
+            match = re.search(pattern, text[pos:])
+            if match:
+                # if greater than 0, there was text between the last pos and the start of the string
+                if match.start() > 0:
+                    children.append(
+                        TextNode(text[pos : pos + match.start()], TextType.TEXT)
+                    )
+                children.append(TextNode(match.group(1), text_type))
+                pos += match.end()
+                break
+        if not match:
+            children.append(TextNode(text[pos:], TextType.TEXT))
+            break
+    return [child.text_node_to_html_node() for child in children]
