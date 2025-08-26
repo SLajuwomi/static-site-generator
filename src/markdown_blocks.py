@@ -54,30 +54,50 @@ def markdown_to_html_node(markdown):
         print(f"Block Type: {type_of_block}")
         print(f"List Items: {list_items}")
         if type_of_block == BlockType.QUOTE:
-            new_html_node = LeafNode("blockquote", block)
+            stripped_list = [item.lstrip("> ").strip() for item in list_items]
+            stripped_block = "\n".join(stripped_list)
+            new_html_node = LeafNode("blockquote", stripped_block)
+            # print(new_html_node.to_html())
         if type_of_block == BlockType.HEADING:
+            heading_count = 0
             for char in block:
                 if char == "#":
                     heading_count += 1
                 else:
                     break
-            new_html_node = ParentNode(f"h{heading_count}", block)
+            stripped_list = [
+                item.lstrip("#" * heading_count + " ").strip() for item in list_items
+            ]
+            stripped_block = "\n".join(stripped_list)
+            new_html_node = LeafNode(f"h{heading_count}", stripped_block)
+            # print(new_html_node.to_html())
         if type_of_block == BlockType.PARAGRAPH:
             new_html_node = LeafNode("p", block)
-            print(new_html_node.to_html())
+            # print(new_html_node.to_html())
         if type_of_block == BlockType.CODE:
             code_content = "\n".join(list_items[1:-1])
             text_code_node = TextNode(code_content, TextType.TEXT)
             text_code_html_node = text_code_node.text_node_to_html_node()
             # code_node = LeafNode("code", code_content)
             pre_node = ParentNode("pre", children=[text_code_html_node])
-            print(pre_node.to_html())
+            # print(pre_node.to_html())
         if type_of_block == BlockType.ULIST:
             li_nodes = [
                 LeafNode("li", item.lstrip("- ").strip()) for item in list_items
             ]
             ul_node = ParentNode("ul", children=li_nodes)
             # print(ul_node.to_html())
+        if type_of_block == BlockType.OLIST:
+            i = 1
+            li_nodes = []
+            for item in list_items:
+                li_nodes.append(LeafNode("li", item.lstrip(f"{i}. ").strip()))
+                i += 1
+            # li_nodes = [
+            #     LeafNode("li", item.lstrip("- ").strip()) for item in list_items
+            # ]
+            ol_node = ParentNode("ol", children=li_nodes)
+            # print(ol_node.to_html())
 
 
 # markdown = """
@@ -86,10 +106,7 @@ def markdown_to_html_node(markdown):
 # - Item 3
 # """
 markdown = """
-```
-This is a code node that _italic_ should not change **bolod**
-testing above
-```
+### This is a level 3 heading
 """
 nodes = markdown_to_html_node(markdown)
 print(nodes)
