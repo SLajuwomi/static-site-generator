@@ -1,4 +1,5 @@
 from enum import Enum
+from extract_markdown import text_to_textnodes
 from htmlnode import HTMLNode, LeafNode, ParentNode
 from textnode import TextNode, TextType
 
@@ -99,29 +100,36 @@ def markdown_to_html_node(markdown):
 
 
 def text_to_children(text):
-    import re
+    # import re
 
+    # children = []
+    # patterns = [
+    #     (r"\*\*(.*?)\*\*", TextType.BOLD),
+    #     (r"_(.*?)_", TextType.ITALIC),
+    #     (r"`(.*?)`", TextType.CODE),
+    # ]
+    # pos = 0
+    # while pos < len(text):
+    #     match = None
+    #     for pattern, text_type in patterns:
+    #         match = re.search(pattern, text[pos:])
+    #         if match:
+    #             # if greater than 0, there was text between the last pos and the start of the string
+    #             if match.start() > 0:
+    #                 children.append(
+    #                     TextNode(text[pos : pos + match.start()], TextType.TEXT)
+    #                 )
+    #             children.append(TextNode(match.group(1), text_type))
+    #             pos += match.end()
+    #             break
+    #     if not match:
+    #         children.append(TextNode(text[pos:], TextType.TEXT))
+    #         break
+    # return [child.text_node_to_html_node() for child in children]
+
+    text_nodes = text_to_textnodes(text)
     children = []
-    patterns = [
-        (r"\*\*(.*?)\*\*", TextType.BOLD),
-        (r"_(.*?)_", TextType.ITALIC),
-        (r"`(.*?)`", TextType.CODE),
-    ]
-    pos = 0
-    while pos < len(text):
-        match = None
-        for pattern, text_type in patterns:
-            match = re.search(pattern, text[pos:])
-            if match:
-                # if greater than 0, there was text between the last pos and the start of the string
-                if match.start() > 0:
-                    children.append(
-                        TextNode(text[pos : pos + match.start()], TextType.TEXT)
-                    )
-                children.append(TextNode(match.group(1), text_type))
-                pos += match.end()
-                break
-        if not match:
-            children.append(TextNode(text[pos:], TextType.TEXT))
-            break
-    return [child.text_node_to_html_node() for child in children]
+    for text_node in text_nodes:
+        html_node = text_node.text_node_to_html_node()
+        children.append(html_node)
+    return children
