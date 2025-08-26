@@ -5,7 +5,7 @@ from textnode import TextType
 
 
 def main():
-    src_to_dst("../static", "../public")
+    src_to_dst("static", "public")
 
 
 def src_to_dst(src, dst):
