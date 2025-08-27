@@ -39,16 +39,9 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, bas
                 path_obj = Path(current_path)
                 if not os.path.isdir(current_path) and not bool(path_obj.suffix):
                     os.makedirs(current_path, exist_ok=True)
-            # print(complete_dest_dir_path)
-            # print(rel_file_path)
-            # print(html_rel_file_path)
-            # print(f"File: {full_file_path}")
             if full_file_path.endswith("md"):
                 generate_page(
                     full_file_path, complete_dest_dir_path, template_path, basepath
                 )
             else:
                 continue
-
-
-# generate_pages_recursive("../content", "../template.html", "../public/")
