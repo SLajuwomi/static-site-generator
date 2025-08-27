@@ -93,10 +93,11 @@ def markdown_to_html_node(markdown):
             i = 1
             li_nodes = []
             for item in list_items:
-                text = item.lstrip(f"{i} ").strip()
+                text = item.lstrip(f"{i}. ").strip()
                 children = text_to_children(text)
                 li_nodes.append(ParentNode("li", children))
-            ol_node = ParentNode("ul", children=li_nodes)
+                i += 1
+            ol_node = ParentNode("ol", children=li_nodes)
             blocked_nodes.append(ol_node)
     div_node = ParentNode("div", blocked_nodes)
     return div_node
