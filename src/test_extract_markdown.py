@@ -3,6 +3,7 @@ import unittest
 from extract_markdown import (
     extract_markdown_images,
     extract_markdown_links,
+    extract_title,
 )
 from markdown_blocks import BlockType, block_to_block_type, markdown_to_blocks
 from extract_markdown import split_nodes_delimiter, split_nodes_image, split_nodes_link
@@ -164,3 +165,20 @@ Testing double new line.
         self.assertEqual(block_to_block_type(block), BlockType.OLIST)
         block = "paragraph"
         self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
+
+    def test_extract_title(self):
+        result1 = extract_title("# Hello")
+        self.assertEqual(result1, "Hello")
+        with self.assertRaises(Exception):
+            extract_title("## This should not work")
+        result3 = extract_title("# This should remove trailing whitespace      ")
+        self.assertEqual(result3, "This should remove trailing whitespace")
+        mul_lines_test = """
+This is the first line with nothing
+This is another nothing burger
+# Here is the actual title
+
+## This is not a title
+"""
+        result4 = extract_title(mul_lines_test)
+        self.assertEqual(result4, "Here is the actual title")

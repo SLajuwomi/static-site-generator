@@ -104,3 +104,12 @@ def split_nodes_link(old_nodes):
             new_nodes.append(TextNode(link_name, TextType.LINK, actual_link))
             after = section[1]
     return new_nodes
+
+
+def extract_title(markdown):
+    lines = markdown.split("\n")
+    for line in lines:
+        if line.strip().startswith("# "):
+            stripped_hashtag_line = line.lstrip("#")
+            return stripped_hashtag_line.strip()
+    raise Exception("No Title Line Found")
