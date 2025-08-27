@@ -45,7 +45,7 @@ class TextNode:
             return LeafNode(tag="a", value=self.text, props={"href": self.url})
         if self.text_type == TextType.IMAGE:
             return LeafNode(
-                tag="img", value="", props={"src": self.url, "alt": self.text}
+                tag="img", value=" ", props={"src": self.url, "alt": self.text}
             )
 
         raise Exception("Unknown error occurred")

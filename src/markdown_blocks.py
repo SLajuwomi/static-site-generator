@@ -82,9 +82,11 @@ def markdown_to_html_node(markdown):
             pre_node = ParentNode("pre", children=[text_code_html_node])
             blocked_nodes.append(pre_node)
         if type_of_block == BlockType.ULIST:
-            li_nodes = [
-                LeafNode("li", item.lstrip("- ").strip()) for item in list_items
-            ]
+            li_nodes = []
+            for item in list_items:
+                text = item.lstrip("- ").strip()
+                children = text_to_children(text)
+                li_nodes.append(ParentNode("li", children))
             ul_node = ParentNode("ul", children=li_nodes)
             blocked_nodes.append(ul_node)
         if type_of_block == BlockType.OLIST:
